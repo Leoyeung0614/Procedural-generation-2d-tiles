@@ -1,21 +1,38 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
-public class Tile : MonoBehaviour
-{
-    [SerializeField] private Color baseColor, offsetColor;
-    [SerializeField] private SpriteRenderer renderer;
-    [SerializeField] private GameObject highlight;
-    public void Init(bool isOffset) {
-        renderer.color = isOffset ? offsetColor : baseColor;
-    }
+    public class Tile : MonoBehaviour
+    {
 
-    void OnMouseEnter() {
-        highlight.SetActive(true);
+        private string name;
+        public enum State {
+            Hidden, 
+            Reveal, 
+            Occured,
+        }
+        [SerializeField] private State state;
+        [SerializeField] private UnityEngine.Vector3 position;
+        [SerializeField] private GameObject highlight;
+
+        public void setName(string name) {
+            this.name = name;
+        }
+        public void setPos(UnityEngine.Vector3 pos) {
+            this.position = pos;
+        }
+        public void setState(State state) {
+            this.state = state;
+        }
+
+        void OnMouseEnter() {
+            highlight.SetActive(true);
+        }
+        
+        void OnMouseExit() {
+            highlight.SetActive(false);
+
+        }
     }
-    
-    void OnMouseExit() {
-        highlight.SetActive(false);
-    }
-}
