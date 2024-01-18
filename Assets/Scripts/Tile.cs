@@ -16,6 +16,10 @@ using UnityEngine;
         [SerializeField] private State state;
         [SerializeField] private UnityEngine.Vector3 position;
         [SerializeField] private GameObject highlight;
+        private float Timestamp;
+        public GameObject tileObject;
+
+
 
         public void setName(string name) {
             this.name = name;
@@ -26,6 +30,20 @@ using UnityEngine;
         public void setState(State state) {
             this.state = state;
         }
+        public void setTimestamp(float time) {
+            this.Timestamp = time;
+        }
+        public void setObject(GameObject obj) {
+            this.tileObject = obj;
+        }
+
+        public float getTimestamp() {
+            return this.Timestamp;
+        }
+
+        // public GameObject getObject() {
+        //     return this.tileObject;
+        // }
 
         void OnMouseEnter() {
             highlight.SetActive(true);

@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c81c7cee21ab39c409eddbb4e226a7c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseColor: {r: 0.38959596, g: 0.8018868, b: 0.44255075, a: 1}
-  offsetColor: {r: 0.18262726, g: 0.6792453, b: 0.24931654, a: 1}
-  renderer: {fileID: 3484121823271511330}
+  state: 0
+  position: {x: 0, y: 0, z: 0}
   highlight: {fileID: 782065095288214755}
+  tileObject: {fileID: 0}

@@ -5,64 +5,68 @@ using UnityEngine;
 
 public class TileGeneration : MonoBehaviour
 {
-    [SerializeField] private Tile tilePrefab;
+    [SerializeField] private GameObject tilePrefab;
     [SerializeField] private Camera cam;
 
-    [SerializeField] private int width = 40;
-    [SerializeField] private int height = 40;
-    [SerializeField] private Vector3 startPos = Vector3.zero;
+    private int length = 5;
+    private Vector3 startPos = Vector3.zero;
     
     private int CamMoveX => (int)(cam.transform.position.x - startPos.x);
     private int CamMoveY => (int)(cam.transform.position.y - startPos.y);
     private int CamLocationX => (int)Mathf.Floor(cam.transform.position.x);
     private int CamLocationY => (int)Mathf.Floor(cam.transform.position.y);
 
-    public Hashtable tiletable = new Hashtable();
+    private Hashtable tiletable;
 
-    private void InitTile() {
-        for (int x = -width; x < width; x++) {
-            for (int y = -height; y < height; y++) {
-                Vector3 pos = new Vector3(x,y);
-
-                var tile = Instantiate(tilePrefab, pos, Quaternion.identity);
-                tile.name = "Tile ("+ x + ", " + y+ ")";
-
-                // set Tile field
-                tile.setName("Hidden tile");
-                tile.setPos(pos);
-                tile.setState(Tile.State.Hidden);
-
-                tiletable.Add(pos, tile);
-            }
-        }
-    }
     private void GenerateTile() {
-        if (Mathf.Abs(CamMoveX) >= 1 || Mathf.Abs(CamMoveY) >= 1) {
-            for (int x = -width; x < width; x++) {
-                for (int y = -height; y < height; y++) {
-                    Vector3 pos = new Vector3(x + CamLocationX,y + CamLocationY);
 
-                    if (!tiletable.ContainsKey(pos)) {
-                        var tile = Instantiate(tilePrefab, pos, Quaternion.identity);
-                        tile.name = "Tile ("+ x + ", " + y+ ")";
+        Hashtable newTile = new Hashtable();
+        float currentTime = Time.realtimeSinceStartup;
 
-                        // set Tile field
-                        tile.setName("Hidden tile");
-                        tile.setPos(pos);
-                        tile.setState(Tile.State.Hidden);
+        for (int x = -length; x < length; x++) {
+            for (int y = -length; y < length; y++) {
+                Vector3 pos = new(x + CamLocationX,y + CamLocationY);
 
-                        tiletable.Add(pos, tile);
-                    }
+                if (!tiletable.ContainsKey(pos)) {
+                    GameObject tile = Instantiate(tilePrefab, pos, Quaternion.identity);
+                    tile.name = "Tile ("+ x + ", " + y+ ")";
+
+                    Tile t = gameObject.AddComponent<Tile>();
+                    // set Tile field
+                    t.setName("Hidden tile");
+                    t.setPos(pos);
+                    t.setState(Tile.State.Hidden);
+                    t.setTimestamp(currentTime);
+                    t.setObject(tile);
+
+                    // add into hashtable
+                    tiletable.Add(pos, t);
+                } else { // if tile exist, update the timestamp;
+                    ((Tile)tiletable[pos]).setTimestamp(currentTime);
                 }
             }
         }
+
+        foreach (Tile t in tiletable.Values) {
+            if (!t.getTimestamp().Equals(currentTime)) {
+                Destroy(t.tileObject);
+            } else {
+                newTile.Add(t.tileObject,t);
+            }
+        }
+
+        tiletable = newTile;
+        startPos = cam.transform.position;
     }
 
     void Start() {
-        InitTile();
+        tiletable = new Hashtable();
+        GenerateTile();
     }
 
     void Update() {
-        GenerateTile();
+        if (Mathf.Abs(CamMoveX) >= 1 || Mathf.Abs(CamMoveY) >= 1) {
+            GenerateTile();
+        }
     }
 }
